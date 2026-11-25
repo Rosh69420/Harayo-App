@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Harayo App{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}?v=4">
+</head>
+<body>
+<header>
+  <a class="logo" href="{% url 'home' %}"><b>H</b><span>Harayo App</span></a>
+  <nav>
+    <a href="{% url 'home' %}">Home</a>
+    {% if user.is_authenticated %}
+      <a href="{% url 'dashboard' %}">My Dashboard</a>
+      <a class="navbtn" href="{% url 'add_post' %}">Add Post</a>
+      <span class="welcome-user">Hi, {{ user.username }}</span>
+      <form action="{% url 'logout' %}" method="post">{% csrf_token %}<button class="logout-link" type="submit">Logout</button></form>
+    {% else %}
+      <a href="{% url 'login' %}">Login</a><a class="navbtn" href="{% url 'signup' %}">Sign Up</a>
+    {% endif %}
+  </nav>
+</header>
+<main>
+  {% for message in messages %}<p class="message">{{ message }}</p>{% endfor %}
+  {% block content %}{% endblock %}
+</main>
+<footer>Harayo App <span>·</span> Helping lost items find their way home.</footer>
+<script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

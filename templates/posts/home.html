@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="hero">
+  <div><small>WELCOME TO HARAYO APP</small><h1>Lost something?<br><span>Let's find it together.</span></h1><p>A community platform to report lost items and share things you have found.</p>
+  {% if user.is_authenticated %}<a class="btn" href="{% url 'add_post' %}">Create a post +</a>{% else %}<a class="btn" href="{% url 'signup' %}">Join the community</a>{% endif %}</div>
+  <div class="symbol">⌕</div>
+</section>
+<div class="heading"><div><small>COMMUNITY POSTS</small><h2>Recent items</h2></div><span>{{ posts|length }} post(s)</span></div>
+<form class="search" method="get">
+  <input name="search" value="{{ search_text }}" placeholder="Search item or location...">
+  <select name="type"><option value="">Lost and Found</option><option value="Lost" {% if post_type == "Lost" %}selected{% endif %}>Lost</option><option value="Found" {% if post_type == "Found" %}selected{% endif %}>Found</option></select>
+  <select name="category"><option value="">All categories</option>{% for value, label in categories %}<option value="{{ value }}" {% if category == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+  <button>Search</button><a href="{% url 'home' %}">Reset</a>
+</form>
+<div class="grid">
+{% for post in posts %}
+  <article class="card">{% if post.photo %}<img src="{{ post.photo.url }}" alt="{{ post.item_name }}">{% else %}<div class="placeholder">⌕</div>{% endif %}
+    <div class="inside"><span class="tag {{ post.post_type|lower }}">{{ post.post_type }}</span><span class="category">{{ post.category }}</span>
+      <h3><a class="item-link" href="{% url 'post_detail' post.id %}">{{ post.item_name }}</a></h3><p>{{ post.description|truncatechars:100 }}</p>
+      <div class="location">📍 {{ post.location }}</div><div class="meta">By {{ post.posted_by.username }} · {{ post.date|date:"M d, Y" }}</div>
+      <a class="details-link" href="{% url 'post_detail' post.id %}">View details and contact →</a>
+    </div>
+  </article>
+{% empty %}<div class="empty"><h3>No items found</h3><p>Try another search or add the first post.</p></div>{% endfor %}
+</div>
+{% endblock %}

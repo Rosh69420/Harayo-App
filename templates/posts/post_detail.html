@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.item_name }} | Harayo App{% endblock %}
+{% block content %}
+<div class="detail-wrap">
+  <a href="{% url 'home' %}" class="back-link">&larr; Back to posts</a>
+  <article class="detail-card">
+    {% if post.photo %}<img class="detail-photo" src="{{ post.photo.url }}" alt="{{ post.item_name }}">{% endif %}
+    <div class="detail-content">
+      <div class="detail-labels"><span class="tag {{ post.post_type|lower }}">{{ post.post_type }}</span><span class="category">{{ post.category }}</span></div>
+      <h1>{{ post.item_name }}</h1>
+      <p class="detail-description">{{ post.description }}</p>
+      <div class="detail-info"><p><b>Location</b><span>{{ post.location }}</span></p><p><b>Date</b><span>{{ post.date|date:"M d, Y" }}</span></p><p><b>Posted by</b><span>{{ post.posted_by.username }}</span></p></div>
+      {% if post.is_resolved %}<p class="resolved-note">This item has been marked as resolved.</p>{% endif %}
+    </div>
+  </article>
+
+  <section class="comments">
+    <div class="comments-heading"><h2>Messages about this item</h2><p>Ask the person who posted it for more information.</p></div>
+    <p class="privacy-note">Messages can be seen by everyone. Please don't post phone numbers, home addresses or other private details.</p>
+    {% if user.is_authenticated %}
+      <form method="post" class="comment-form">{% csrf_token %}
+        {{ form.message }}
+        {% for error in form.message.errors %}<small class="error">{{ error }}</small>{% endfor %}
+        <button class="btn" type="submit">Send message</button>
+      </form>
+    {% else %}
+      <p class="login-note"><a href="{% url 'login' %}">Log in</a> to leave a message.</p>
+    {% endif %}
+    <div class="comment-list">
+      {% for comment in comments %}
+        <div class="comment"><div class="comment-top"><b>{{ comment.user.username }}</b><span>{{ comment.date|date:"M d, Y · H:i" }}</span></div><p>{{ comment.message|linebreaksbr }}</p></div>
+      {% empty %}<p class="no-comments">No messages yet.</p>{% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}

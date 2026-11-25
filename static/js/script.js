@@ -1,0 +1,1 @@
+document.querySelectorAll(".resolve").forEach(function(form){form.addEventListener("submit",function(event){if(!confirm("Change this post status?")){event.preventDefault();}});});
